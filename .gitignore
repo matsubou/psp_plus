@@ -11,6 +11,7 @@
 *.mp4
 *.pth
 *.dat
+*.ipynb
 notebooks
 checkpoints
 checkpoints/*

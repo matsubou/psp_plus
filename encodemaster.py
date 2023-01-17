@@ -47,15 +47,15 @@ class EncodeMaster:
 
 	def loadNextImages(self):
 		self.imgs1024, _ = next(self.loader)
-		return self.transform256(imgs1024.to(self.device))
+		return self.transform256(self.imgs1024.to(self.device))
 
 	def _encode(self, image):
 		z = self.net.encoder(image)
-		z += self.net.latent_avg.repeat(z0.shape[0], 1, 1)
+		z += self.net.latent_avg.repeat(z.shape[0], 1, 1)
 		return z
 
 	def _decode(self, z):
-		imgs, _ = net.decoder([z], 
+		imgs, _ = self.net.decoder([z], 
 			input_is_latent=True,
 			randomize_noise=False)
 		return imgs
@@ -72,7 +72,7 @@ class EncodeMaster:
 
 		return z0
 
-	def train(self, iters=500, showEvery=100):
+	def train(self, z0, iters=500, showEvery=100):
 		z = z0.detach().clone()
 		z.requires_grad = True
 		optimizer = torch.optim.Adam([z], lr=0.01)
@@ -93,6 +93,6 @@ class EncodeMaster:
 				imgs_fakes = torch.cat([img_gen for img_gen in imgs_gen], dim=1)        
 				imshow(tensor2image(torch.cat([imgs_real, imgs_fakes], dim=2)),10)
 
-	def saveLatent(self, name):
+	def saveLatent(self, name, z):
 		np.save(f'{self.root}/saved_latents/{name}.npy', z.detach().squeeze().cpu().numpy())
 
