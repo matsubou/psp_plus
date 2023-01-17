@@ -85,3 +85,19 @@ def vis_faces_no_id(hooks_dict, fig, gs, i):
 	fig.add_subplot(gs[i, 2])
 	plt.imshow(hooks_dict['output_face'])
 	plt.title('Output')
+
+
+# ====
+def image2tensor(image):
+    image = torch.FloatTensor(image).permute(2,0,1).unsqueeze(0)/255.
+    return (image-0.5)/0.5
+
+def tensor2image(tensor):
+    tensor = tensor.clamp_(-1., 1.).detach().squeeze().permute(1,2,0).cpu().numpy()
+    return tensor*0.5 + 0.5
+
+def imshow(img, size=5, cmap='jet'):
+    plt.figure(figsize=(size,size))
+    plt.imshow(img, cmap=cmap)
+    plt.axis('off')
+    plt.show()
